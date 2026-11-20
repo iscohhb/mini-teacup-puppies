@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { site } from '@/data/site';
-import { fetchPublishedBlogPostsServer } from '@/lib/db.server';
+import { fetchPublicDogsServer, fetchPublishedBlogPostsServer } from '@/lib/db.server';
+import { dogUrl } from '@/lib/puppy';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await fetchPublishedBlogPostsServer();
+  const [posts, dogs] = await Promise.all([fetchPublishedBlogPostsServer(), fetchPublicDogsServer()]);
 
   const staticRoutes = [
     '',
@@ -17,6 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/faq',
     '/puppy-delivery',
     '/testimonials',
+    '/puppy-contract',
+    '/return-refund-policy',
   ].map((path) => ({
     url: `${site.url}${path}`,
     lastModified: new Date(),
@@ -27,5 +30,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(post.date),
   }));
 
-  return [...staticRoutes, ...blogRoutes];
+  const dogRoutes = dogs.map((dog) => ({
+    url: dogUrl(dog),
+    changeFrequency: 'daily' as const,
+    priority: dog.status === 'Sold' ? 0.3 : 0.8,
+  }));
+
+  return [...staticRoutes, ...dogRoutes, ...blogRoutes];
 }

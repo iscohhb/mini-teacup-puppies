@@ -9,14 +9,17 @@ export const site = {
   name: 'Mini Teacup Puppies 4 Homes',
   tagline: 'Family Raised Mini Teacup Puppies',
   shortPitch: 'Tiny companions, big love.',
-  foundedYear: 2015,
-  soldCount: '300+',
+  // Only fill these in with figures you can document (e.g. first litter year,
+  // number of puppies actually placed). Left empty/null, they are hidden.
+  foundedYear: null as number | null,
+  soldCount: '' as string,
   city: 'Your City',
   state: 'Your State',
 
   // --- SEO ---
   // Your live domain (no trailing slash). Used for canonical URLs & sitemap.
-  url: 'https://miniteacuppuppies4homes.com',
+  // Must match the primary domain set in Vercel (currently www).
+  url: 'https://www.miniteacuppuppies4homes.com',
   seoDescription:
     'Healthy, home raised Mini Teacup Puppies. Yorkie, Maltipoo, Poodle, Shih Tzu and Dachshund. Checked by a vet, vaccinated, and raised with love. We are based in the US and we ship all over the world. Reserve your puppy today.',
   keywords:

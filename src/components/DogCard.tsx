@@ -7,6 +7,7 @@ import type { Dog } from '@/types';
 import { getOptimizedImageUrl } from '@/lib/image-utils';
 import { HeartIcon, PawIcon } from './Icons';
 import { getFavourites, toggleFavourite } from '@/lib/localStorage-utils';
+import { dogPath } from '@/lib/puppy';
 
 const SLIDE_INTERVAL = 4500;
 
@@ -37,7 +38,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
     <motion.article
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-      className="card group flex h-full flex-col overflow-hidden hover:shadow-lift"
+      className="card group relative flex h-full flex-col overflow-hidden hover:shadow-lift"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-sand/30">
         <AnimatePresence>
@@ -72,7 +73,7 @@ export default function DogCard({ dog }: { dog: Dog }) {
           onClick={onFav}
           aria-pressed={fav}
           aria-label={fav ? `Remove ${dog.name} from favourites` : `Add ${dog.name} to favourites`}
-          className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ember shadow-sm backdrop-blur transition hover:scale-110"
+          className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ember shadow-sm backdrop-blur transition hover:scale-110"
         >
           <HeartIcon filled={fav} className="h-5 w-5" />
         </button>
@@ -80,7 +81,10 @@ export default function DogCard({ dog }: { dog: Dog }) {
 
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-xl font-extrabold text-forest-800">
-          Name: {dog.name} <span className="text-muted">|</span> <span className="text-ember">${dog.price.toLocaleString()}</span>
+          <Link href={dogPath(dog)} className="after:absolute after:inset-0 hover:text-ember">
+            {dog.name}
+          </Link>{' '}
+          <span className="text-muted">|</span> <span className="text-ember">${dog.price.toLocaleString()}</span>
         </h3>
 
         <ul className="mt-3 space-y-1.5">
@@ -93,8 +97,8 @@ export default function DogCard({ dog }: { dog: Dog }) {
         </ul>
 
         <div className="mt-auto pt-5">
-          <Link href={`/contact?dog=${dog.id}`} className="btn-accent w-full">
-            Contact Us Now!
+          <Link href={dogPath(dog)} className="btn-accent relative z-10 w-full">
+            Meet {dog.name}
           </Link>
         </div>
       </div>

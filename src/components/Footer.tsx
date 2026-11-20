@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Logo from './Logo';
 import NewsletterSignup from './NewsletterSignup';
-import { FacebookIcon, InstagramIcon, TikTokIcon, MailIcon, PhoneIcon, PinIcon, ShieldIcon, StarIcon, LockIcon, WhatsAppIcon } from './Icons';
+import { FacebookIcon, InstagramIcon, TikTokIcon, MailIcon, PhoneIcon, PinIcon, ShieldIcon, WhatsAppIcon } from './Icons';
 import { site, waLink } from '@/data/site';
 
 const quickLinks = [
@@ -89,12 +89,6 @@ export default function Footer() {
           <div className="mt-6 flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
               <ShieldIcon className="h-4 w-4 text-ember-200" /> Health Guarantee
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
-              <StarIcon className="h-3.5 w-3.5 text-ember-200" /> 5 Star Breeder
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
-              <LockIcon className="h-3.5 w-3.5 text-ember-200" /> Secure Checkout
             </span>
           </div>
         </div>

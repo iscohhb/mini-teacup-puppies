@@ -3,9 +3,7 @@ import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import { fetchPublishedBlogPostsServer } from '@/lib/db.server';
 import { site } from '@/data/site';
-import { allPhotos } from '@/data/teacupPhotos';
 
-const heroImg = allPhotos[5];
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -35,7 +33,7 @@ export default async function BlogPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([blogPageSchema, breadcrumbJsonLd]) }} />
-      <PageHero title="Our Blog" subtitle="Tips, news, and everything you need to know about Mini Teacup Puppies." image={heroImg} breadcrumb="Blog" />
+      <PageHero title="Our Blog" subtitle="Tips, news, and everything you need to know about Mini Teacup Puppies." breadcrumb="Blog" />
 
       <section className="container-page py-14 md:py-20">
         {posts.length === 0 ? (
@@ -46,7 +44,7 @@ export default async function BlogPage() {
               <article key={post.id} className="card group flex h-full flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-lift">
                 <div className="relative aspect-video overflow-hidden">
                   <Link href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>
-                    <img src={post.image} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    {post.image && <img src={post.image} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                   </Link>
                 </div>
                 <div className="flex flex-1 flex-col p-6">

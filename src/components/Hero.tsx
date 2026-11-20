@@ -5,23 +5,29 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PawIcon, ArrowRightIcon, HeartIcon } from './Icons';
 import { site } from '@/data/site';
-import { allPhotos } from '@/data/teacupPhotos';
 
-const heroImages = [
-  { src: allPhotos[0], alt: 'A tiny teacup puppy resting peacefully' },
-  { src: allPhotos[1], alt: 'A fluffy teacup puppy gazing into the distance' },
-  { src: allPhotos[2], alt: 'A gentle teacup puppy curled up in a cosy home' },
-];
+export interface HeroImage {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  /** Photos of our own puppies (from /admin uploads). */
+  images: HeroImage[];
+  /** Facts shown under the intro, computed from real listings. */
+  stats: { n: string; l: string }[];
+}
 
 const SLIDE_INTERVAL = 3000;
 
-export default function Hero() {
+export default function Hero({ images: heroImages, stats }: Props) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (heroImages.length < 2) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % heroImages.length), SLIDE_INTERVAL);
     return () => clearInterval(id);
-  }, []);
+  }, [heroImages.length]);
 
   return (
     <section className="relative overflow-hidden bg-cream">
@@ -69,11 +75,7 @@ export default function Hero() {
             className="mt-10 grid max-w-md animate-fade-up grid-cols-3 gap-4"
             style={{ animationDelay: '480ms', animationFillMode: 'backwards' }}
           >
-            {[
-              { n: site.soldCount, l: 'Puppies placed' },
-              { n: String(new Date().getFullYear() - site.foundedYear), l: 'Years breeding' },
-              { n: '100%', l: 'Health guaranteed' },
-            ].map((s) => (
+            {stats.map((s) => (
               <div key={s.l}>
                 <dt className="text-2xl font-extrabold text-forest">{s.n}</dt>
                 <dd className="text-sm text-muted">{s.l}</dd>
@@ -82,7 +84,8 @@ export default function Hero() {
           </dl>
         </div>
 
-        {/* Image slideshow */}
+        {/* Image slideshow (real puppy photos only) */}
+        {heroImages.length > 0 && (
         <div className="relative animate-fade-up" style={{ animationDelay: '120ms', animationFillMode: 'backwards' }}>
           <div className="relative">
             <div className="relative h-[460px] overflow-hidden rounded-[2.5rem] shadow-lift ring-1 ring-black/5">
@@ -106,7 +109,7 @@ export default function Hero() {
               <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
                 {heroImages.map((img, i) => (
                   <button
-                    key={img.src}
+                    key={`${img.src}-${i}`}
                     type="button"
                     onClick={() => setIndex(i)}
                     aria-label={`Show dog photo ${i + 1}`}
@@ -134,6 +137,7 @@ export default function Hero() {
             View Available Puppies <ArrowRightIcon className="h-5 w-5" />
           </Link>
         </div>
+        )}
       </div>
     </section>
   );

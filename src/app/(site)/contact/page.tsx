@@ -3,10 +3,8 @@ import PageHero from '@/components/PageHero';
 import ContactForm from '@/components/ContactForm';
 import { MailIcon, PhoneIcon, PinIcon, FacebookIcon, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/Icons';
 import { site, waLink } from '@/data/site';
-import { allPhotos } from '@/data/teacupPhotos';
 import { fetchPublicDogsServer } from '@/lib/db.server';
 
-const heroImg = allPhotos[3];
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -37,7 +35,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([contactPageSchema, breadcrumbJsonLd]) }} />
-      <PageHero title="Contact Us" subtitle="Questions about reservations, pricing or delivery? We'd love to hear from you." image={heroImg} />
+      <PageHero title="Contact Us" subtitle="Questions about reservations, pricing or delivery? We'd love to hear from you." />
 
       <section className="container-page py-14 md:py-20">
         <div className="mx-auto max-w-3xl">

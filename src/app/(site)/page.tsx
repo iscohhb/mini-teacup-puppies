@@ -17,7 +17,6 @@ import {
   StarIcon,
 } from '@/components/Icons';
 import { fetchPublicDogsServer, fetchPublicTestimonialsServer } from '@/lib/db.server';
-import { allPhotos } from '@/data/teacupPhotos';
 
 const services = [
   { icon: <HeartIcon className="h-7 w-7" />, title: 'Health Checked', text: 'Every puppy is checked by a vet, vaccinated and comes with a written health guarantee.' },
@@ -37,10 +36,22 @@ export default async function HomePage() {
   const [dogs, testimonials] = await Promise.all([fetchPublicDogsServer(), fetchPublicTestimonialsServer()]);
   const featured = dogs.filter((d) => d.status !== 'Sold').slice(0, 3);
 
+  // All imagery on the home page comes from our own puppy listings.
+  const photos = dogs.flatMap((d) => d.images.slice(0, 1).map((src) => ({ src, alt: `${d.name}, ${d.breed} puppy` })));
+  const availableCount = dogs.filter((d) => d.status === 'Available').length;
+  const breedCount = new Set(dogs.map((d) => d.breed.toLowerCase())).size;
+  const facts = [
+    ...(site.soldCount ? [{ n: site.soldCount, l: 'Puppies placed' }] : []),
+    ...(site.foundedYear ? [{ n: String(new Date().getFullYear() - site.foundedYear), l: 'Years breeding' }] : []),
+    { n: String(availableCount), l: 'Puppies available now' },
+    { n: String(breedCount), l: 'Breeds' },
+    { n: 'Written', l: 'Health guarantee' },
+  ].slice(0, 3);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-      <Hero />
+      <Hero images={photos.slice(0, 3)} stats={facts} />
 
       {/* Tagline band */}
       <section className="bg-forest text-white">
@@ -58,7 +69,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <DogSlideshow />
+      <DogSlideshow dogs={dogs} />
 
       {/* Why we exist — service cards */}
       <section className="container-page py-16 md:py-24">
@@ -82,28 +93,28 @@ export default async function HomePage() {
       <section className="overflow-hidden bg-sand/40 py-16 md:py-24">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
           <div className="relative hidden h-[460px] lg:block">
-            <img
-              src={allPhotos[6]}
-              alt="A mini teacup puppy being cared for at home"
-              loading="lazy"
-              className="absolute right-0 top-0 h-4/5 w-3/4 rounded-[2rem] object-cover shadow-lift"
-            />
-            <img
-              src={allPhotos[7]}
-              alt="A happy teacup puppy in a loving home"
-              loading="lazy"
-              className="absolute bottom-0 left-0 h-2/5 w-2/5 rounded-[1.5rem] object-cover shadow-lift ring-4 ring-cream"
-            />
-            <div className="absolute bottom-20 right-4 rounded-2xl bg-forest px-5 py-4 text-white shadow-lift">
-              <p className="text-2xl font-extrabold leading-none">{site.soldCount}</p>
-              <p className="mt-1 text-xs text-cream/80">puppies placed since {site.foundedYear}</p>
-            </div>
+            {photos[3] && (
+              <img
+                src={photos[3].src}
+                alt={photos[3].alt}
+                loading="lazy"
+                className="absolute right-0 top-0 h-4/5 w-3/4 rounded-[2rem] object-cover shadow-lift"
+              />
+            )}
+            {photos[4] && (
+              <img
+                src={photos[4].src}
+                alt={photos[4].alt}
+                loading="lazy"
+                className="absolute bottom-0 left-0 h-2/5 w-2/5 rounded-[1.5rem] object-cover shadow-lift ring-4 ring-cream"
+              />
+            )}
           </div>
 
           <Reveal>
             <SectionHeading align="left" eyebrow="About us" title="A breeder built on love for Mini Teacup Puppies" className="!mx-0" />
             <p className="mt-5 leading-relaxed text-ink/85">
-              Founded in {site.foundedYear} by a family who loves small dogs, we raise our Yorkie, Maltipoo, Poodle,
+              {site.foundedYear ? `Founded in ${site.foundedYear} by a family who loves small dogs, we` : 'A family who loves small dogs, we'} raise our Yorkie, Maltipoo, Poodle,
               Shih Tzu and Dachshund puppies in our home, never in kennels, so they grow up confident,
               affectionate and ready to bond with you.
             </p>
@@ -113,11 +124,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-7 grid grid-cols-3 gap-4 border-t border-forest-100 pt-6">
-              {[
-                { n: site.soldCount, l: 'Puppies placed' },
-                { n: String(new Date().getFullYear() - site.foundedYear), l: 'Years breeding' },
-                { n: '100%', l: 'Health guaranteed' },
-              ].map((s) => (
+              {facts.map((s) => (
                 <div key={s.l}>
                   <p className="text-3xl font-extrabold text-forest">{s.n}</p>
                   <p className="mt-0.5 text-sm text-muted">{s.l}</p>

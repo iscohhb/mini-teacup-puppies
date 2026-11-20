@@ -1,4 +1,3 @@
-import { allPhotos } from '@/data/teacupPhotos';
 
 export interface BlogPost {
   id: string;
@@ -43,7 +42,7 @@ export const blogPosts: BlogPost[] = [
       <h3>Choosing the Right Puppy for Your Home</h3>
       <p>Think about coat care (Poodles and Maltipoos that shed very little suit people with allergies), energy level, and how much lap time you want. Whichever breed you choose, always ask about health checks, vaccinations and socialization before bringing a puppy home.</p>
     `,
-    image: allPhotos[6],
+    image: '',
     published: true,
   },
   {
@@ -67,7 +66,7 @@ export const blogPosts: BlogPost[] = [
       <h3>Health Checklist</h3>
       <p>Book your first vet visit within 72 hours of pickup, keep up with the vaccination schedule your breeder gave you, and ask about dental care early. Small breeds are prone to dental problems, so starting good habits young matters.</p>
     `,
-    image: allPhotos[7],
+    image: '',
     published: true,
   },
 ];

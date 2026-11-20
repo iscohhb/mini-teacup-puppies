@@ -3,9 +3,8 @@ import PageHero from '@/components/PageHero';
 import DogsBrowser from '@/components/DogsBrowser';
 import { site } from '@/data/site';
 import { fetchPublicDogsServer } from '@/lib/db.server';
-import { allPhotos } from '@/data/teacupPhotos';
+import { dogUrl } from '@/lib/puppy';
 
-const heroImg = allPhotos[2];
 
 export const metadata: Metadata = {
   title: 'Available Mini Teacup Puppies',
@@ -23,8 +22,8 @@ export default async function DogsPage() {
           itemListElement: dogs.map((dog, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            url: `${site.url}/dogs`,
-            name: dog.name,
+            url: dogUrl(dog),
+            name: `${dog.name}, ${dog.breed} puppy`,
             image: dog.images?.[0] || '',
           })),
         }
@@ -45,7 +44,7 @@ export default async function DogsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema ? [itemListSchema, breadcrumbJsonLd] : breadcrumbJsonLd) }}
       />
-      <PageHero title="Available Mini Teacup Puppies" subtitle="Browse our available puppies. Checked by a vet, vaccinated, and ready for their new homes. Nationwide delivery available." image={heroImg} />
+      <PageHero title="Available Mini Teacup Puppies" subtitle="Browse our available puppies. Checked by a vet, vaccinated, and ready for their new homes. Nationwide delivery available." />
 
       <section className="container-page py-12 md:py-16">
         <DogsBrowser dogs={dogs} />

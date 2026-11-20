@@ -3,12 +3,10 @@ import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import TrustBadge from '@/components/TrustBadge';
-import { ShieldIcon, HeartIcon, PawIcon, ArrowRightIcon, StarIcon, HandshakeIcon } from '@/components/Icons';
+import { ShieldIcon, HeartIcon, PawIcon, ArrowRightIcon, ClipboardIcon, HandshakeIcon } from '@/components/Icons';
 import { team } from '@/data/team';
 import { site } from '@/data/site';
-import { allPhotos } from '@/data/teacupPhotos';
-
-const heroImg = allPhotos[8];
+import { fetchPublicDogsServer } from '@/lib/db.server';
 
 const values = [
   { icon: <HeartIcon className="h-7 w-7" />, title: 'Compassion first', text: 'Every puppy is raised in our home with patience and affection, from birth to the day they go home.' },
@@ -21,7 +19,10 @@ export const metadata: Metadata = {
   description: `Learn about ${site.name}, how we raise healthy, socialized Mini Teacup Puppies at home, and our written health guarantee.`,
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const dogs = await fetchPublicDogsServer();
+  const photos = dogs.flatMap((d) => d.images.slice(0, 1).map((src) => ({ src, alt: `${d.name}, ${d.breed} puppy` })));
+
   const aboutPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -46,27 +47,31 @@ export default function AboutPage() {
       <PageHero
         title={`About ${site.name}`}
         subtitle="A small, passionate breeder raising healthy, well socialised Mini Teacup Puppies for families across the US and worldwide."
-        image={heroImg}
         breadcrumb="About Us"
       />
 
       {/* Story */}
       <section className="container-page py-14 md:py-20">
         <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div className="overflow-hidden rounded-[2.5rem] shadow-lift ring-1 ring-black/5">
-            <img src={allPhotos[0]} alt="A mini teacup puppy resting comfortably" loading="lazy" className="h-full w-full object-cover" />
-          </div>
+          {photos[0] && (
+            <div className="overflow-hidden rounded-[2.5rem] shadow-lift ring-1 ring-black/5">
+              <img src={photos[0].src} alt={photos[0].alt} loading="lazy" className="h-full w-full object-cover" />
+            </div>
+          )}
           <div>
-            <SectionHeading align="left" eyebrow="Our story" title={`Raising exceptional Mini Teacup Puppies since ${site.foundedYear}`} className="!mx-0" />
+            <SectionHeading align="left" eyebrow="Our story" title={site.foundedYear ? `Raising Mini Teacup Puppies since ${site.foundedYear}` : 'Raising Mini Teacup Puppies at home'} className="!mx-0" />
             <p className="mt-5 leading-relaxed text-ink/85">
               {site.name} began with a simple love for small dogs with big hearts. Our Yorkie, Maltipoo, Poodle, Shih
               Tzu and Dachshund puppies are raised in our home, not in kennels, so they grow up
               confident, affectionate and beautifully socialised with people and other pets.
             </p>
             <p className="mt-4 leading-relaxed text-ink/85">
-              Every puppy is checked by a vet, vaccinated and comes with a health guarantee. Over the years we&apos;ve
-              placed <strong className="text-forest-700">{site.soldCount} puppies</strong> with happy families,
-              and counting.
+              Every puppy is checked by a vet, vaccinated and comes with a written health guarantee.
+              {site.soldCount && (
+                <>
+                  {' '}So far we&apos;ve placed <strong className="text-forest-700">{site.soldCount} puppies</strong> with families.
+                </>
+              )}
             </p>
             <div className="mt-6 rounded-2xl bg-forest-50 p-5">
               <p className="font-bold text-forest-800">Our promise</p>
@@ -83,9 +88,9 @@ export default function AboutPage() {
       <section className="bg-sand/60 py-14">
         <div className="container-page grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <TrustBadge icon={<ShieldIcon />} title="Health Guarantee" subtitle="Checked by a vet and vaccinated" />
-          <TrustBadge icon={<HeartIcon />} title={`${site.soldCount} Puppies Placed`} subtitle={`Since ${site.foundedYear}`} />
+          <TrustBadge icon={<HeartIcon />} title="Raised at Home" subtitle="Socialised with people and pets" />
           <TrustBadge icon={<PawIcon />} title="Nationwide Delivery" subtitle="Safe delivery to your door" />
-          <TrustBadge icon={<StarIcon />} title="5 Star Breeder" subtitle="Trusted by families" />
+          <TrustBadge icon={<ClipboardIcon />} title="Written Contract" subtitle="Clear terms before you pay" />
         </div>
       </section>
 
@@ -103,7 +108,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Team (shown only once real team members are added in src/data/team.ts) */}
+      {team.length > 0 && (
       <section className="bg-sand/40 py-14 md:py-20">
         <div className="container-page">
           <SectionHeading eyebrow="Meet the team" title="The family behind the breeder" description="A small team who raise, socialise and care for every puppy before it goes home." />
@@ -123,13 +129,16 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Why Mini Teacup Puppies */}
       <section className="bg-forest-800 py-14 text-white md:py-20">
         <div className="container-page grid items-center gap-10 lg:grid-cols-2">
-          <div className="overflow-hidden rounded-[2.5rem] shadow-lift lg:order-2">
-            <img src={allPhotos[1]} alt="A tiny teacup puppy" loading="lazy" className="h-full w-full object-cover" />
-          </div>
+          {photos[1] && (
+            <div className="overflow-hidden rounded-[2.5rem] shadow-lift lg:order-2">
+              <img src={photos[1].src} alt={photos[1].alt} loading="lazy" className="h-full w-full object-cover" />
+            </div>
+          )}
           <div className="lg:order-1">
             <span className="badge inline-flex items-center gap-1.5 bg-white/15 text-white">
               <PawIcon className="h-3.5 w-3.5" /> The breeds

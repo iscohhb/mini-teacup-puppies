@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import PageHero from '@/components/PageHero';
 import PuppyApplicationForm from '@/components/PuppyApplicationForm';
 import { fetchPublicDogsServer } from '@/lib/db.server';
-import { allPhotos } from '@/data/teacupPhotos';
 
-const heroImg = allPhotos[4];
 
 export const metadata: Metadata = {
   title: 'Reserve a Puppy',
@@ -20,7 +18,7 @@ export default async function ReservePage() {
       <PageHero
         title="Reserve a Puppy"
         subtitle="Pick the puppy you're interested in and tell us a little about your home. We'll be in touch within 24 hours."
-        image={heroImg}
+       
       />
       <section className="container-page py-12 md:py-16">
         <div className="mx-auto max-w-3xl">

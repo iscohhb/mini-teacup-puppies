@@ -4,52 +4,39 @@ import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRightIcon } from './Icons';
-import { yorkiePhotos, maltipooPhotos, dachshundPhotos } from '@/data/teacupPhotos';
-
-const slides = [
-  {
-    id: 0,
-    image: yorkiePhotos[4],
-    eyebrow: 'Meet Daisy',
-    heading: 'Meet your new best friend',
-    sub: 'A confident, affectionate Teacup Yorkie ready to join your family.',
-    location: 'Available nationwide',
-    dogId: 'daisy',
-  },
-  {
-    id: 1,
-    image: maltipooPhotos[4],
-    eyebrow: 'Meet Luna',
-    heading: 'Fill your home with love in a tiny package',
-    sub: 'Gentle, cuddly and utterly charming. Luna is ready to steal your heart.',
-    location: 'Available nationwide',
-    dogId: 'luna',
-  },
-  {
-    id: 2,
-    image: dachshundPhotos[4],
-    eyebrow: 'Meet Pepper',
-    heading: 'Small dog, big personality',
-    sub: 'Raised at home and beautifully socialised, Pepper is ready to come home with you.',
-    location: 'Available nationwide',
-    dogId: 'pepper',
-  },
-];
+import type { Dog } from '@/types';
+import { dogPath, shortDescriptionOf } from '@/lib/puppy';
 
 const INTERVAL = 5500;
 
-export default function DogSlideshow() {
+/** Featured-puppy slideshow built from real, published listings. */
+export default function DogSlideshow({ dogs }: { dogs: Dog[] }) {
+  const slides = dogs
+    .filter((d) => d.status !== 'Sold' && d.images.length > 0)
+    .slice(0, 3)
+    .map((d) => ({
+      id: d.id,
+      image: d.images[0],
+      name: d.name,
+      eyebrow: `Meet ${d.name}`,
+      heading: `${d.name}, ${d.breed} puppy`,
+      sub: shortDescriptionOf(d),
+      location: d.status === 'Available' ? 'Available now' : 'Reserved',
+      href: dogPath(d),
+    }));
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const next = useCallback(() => setCurrent((prev) => (prev + 1) % slides.length), []);
-  const prev = useCallback(() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length), []);
+  const next = useCallback(() => setCurrent((prev) => (prev + 1) % Math.max(slides.length, 1)), [slides.length]);
+  const prev = useCallback(() => setCurrent((prev) => (prev - 1 + slides.length) % Math.max(slides.length, 1)), [slides.length]);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || slides.length < 2) return;
     const id = setInterval(next, INTERVAL);
     return () => clearInterval(id);
-  }, [next, paused]);
+  }, [next, paused, slides.length]);
+
+  if (slides.length === 0) return null;
 
   return (
     <section
@@ -69,7 +56,7 @@ export default function DogSlideshow() {
         >
           <motion.img
             src={slides[current].image}
-            alt={slides[current].eyebrow}
+            alt={slides[current].heading}
             className="h-full w-full object-cover"
             initial={{ scale: 1.08 }}
             animate={{ scale: 1 }}
@@ -113,8 +100,8 @@ export default function DogSlideshow() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.65, duration: 0.6 }}
               >
-                <Link href={`/contact?dog=${slides[current].dogId}`} className="btn-primary">
-                  Bring {slides[current].eyebrow.replace('Meet ', '')} Home <ArrowRightIcon className="h-5 w-5" />
+                <Link href={slides[current].href} className="btn-primary">
+                  Meet {slides[current].name} <ArrowRightIcon className="h-5 w-5" />
                 </Link>
                 <Link href="/dogs" className="btn-outline-white">
                   All puppies

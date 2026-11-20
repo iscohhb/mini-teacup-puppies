@@ -4,6 +4,7 @@ import { testimonials as seedTestimonials } from '@/data/testimonials';
 import { blogPosts as seedBlogPosts, type BlogPost } from '@/data/blog';
 import type { Dog, Testimonial } from '@/types';
 import { rowToAdminDog, rowToBlogPost, type DogRow, type BlogPostRow } from './db';
+import { publicDogs } from './puppy';
 
 /** Server-side variant of fetchPublicDogs, for use in Server Components. */
 export async function fetchPublicDogsServer(): Promise<Dog[]> {
@@ -14,8 +15,17 @@ export async function fetchPublicDogsServer(): Promise<Dog[]> {
     .eq('published', true)
     .order('created_at', { ascending: false });
 
-  if (error || !data) return seedDogs;
-  return (data as DogRow[]).map(rowToAdminDog);
+  if (error || !data) return publicDogs(seedDogs);
+  return publicDogs((data as DogRow[]).map(rowToAdminDog));
+}
+
+/** One published puppy by its URL slug (cleaned for display), or undefined. */
+export async function fetchPublicDogBySlugServer(slug: string): Promise<Dog | undefined> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('dogs').select('*').eq('slug', slug).eq('published', true).maybeSingle();
+
+  if (error || !data) return publicDogs(seedDogs).find((d) => d.id === slug);
+  return publicDogs([rowToAdminDog(data as DogRow)])[0];
 }
 
 export async function fetchPublicTestimonialsServer(): Promise<Testimonial[]> {

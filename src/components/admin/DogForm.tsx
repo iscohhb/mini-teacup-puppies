@@ -413,11 +413,11 @@ export default function DogForm({ rowId }: { rowId?: string }) {
             {/* Descriptions */}
             <section className="card space-y-4 p-6">
               <h2 className="text-lg font-extrabold text-forest-800">Description</h2>
-              <Field label="Short description" hint="Shown on cards">
-                <textarea rows={2} className="input" value={form.shortDescription} onChange={(e) => set('shortDescription', e.target.value)} />
+              <Field label="Short description" hint="1 to 2 sentences, shown at the top of the puppy's page and in Google. Only write what is true for this puppy.">
+                <textarea rows={2} maxLength={300} className="input" value={form.shortDescription} onChange={(e) => set('shortDescription', e.target.value)} />
               </Field>
-              <Field label="Full story">
-                <textarea rows={5} className="input" value={form.story} onChange={(e) => set('story', e.target.value)} />
+              <Field label="Long description" hint="Several paragraphs (blank line between them): personality, parents, size estimate, health records, what's included. Only facts about this puppy.">
+                <textarea rows={10} className="input" value={form.story} onChange={(e) => set('story', e.target.value)} />
               </Field>
             </section>
 
