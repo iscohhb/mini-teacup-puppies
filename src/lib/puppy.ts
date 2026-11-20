@@ -61,9 +61,14 @@ export const dogUrl = (dog: Pick<Dog, 'id'>) => `${site.url}${dogPath(dog)}`;
 
 /** "Female", "12 weeks old" → "12-week-old female". */
 function ageSex(dog: Dog) {
-  const age = dog.ageLabel.replace(/\s*old$/i, '').trim();
+  // "12 weeks old" -> "12-week-old", "9 to 10 weeks old" -> "9-to-10-week-old"
+  const age = dog.ageLabel
+    .replace(/\s*old$/i, '')
+    .trim()
+    .replace(/\b(week|month|year)s\b/i, '$1')
+    .replace(/\s+/g, '-');
   const sex = dog.gender.toLowerCase();
-  return age ? `${age} old ${sex}` : sex;
+  return age ? `${age}-old ${sex}` : sex;
 }
 
 const statusText: Record<Dog['status'], string> = {
